@@ -31,16 +31,21 @@ def deal(player_count):
     return hands
 
 def sort_hand(self, hand):
-        value_list = {}
-        for i in self.normal_cards:
-            value_list[i] = []
-        for i in self.special.keys():
-            value_list[i] = []
-        for i in hand:
-            if(i in self.special.keys()):
-                value_list[i].append(i)
-            else:
-                if(i[0] in self.normal_cards):
-                    value_list[i[0]].append(i)
-  
-        print(value_list)
+    value_list = {}
+    for i in self.normal_cards:
+        value_list[i] = []
+    for i in self.special.keys():
+        value_list[i] = []
+    for i in hand:
+        if(i in self.special.keys()):
+            value_list[i].append(i)
+        else:
+            if(i[0] in self.normal_cards):
+                value_list[i[0]].append(i)
+
+    for i,k in value_list.items():
+        if(i not in self.special.keys()):
+            if(len(k) > 1):
+                suit_sorted = []
+
+    print(value_list)
