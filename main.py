@@ -1,4 +1,8 @@
 import cards
+from game import Game
 
-hands = cards.deal(4)
+player_count = 4
+
+hands = cards.deal(player_count)
 print(hands)
+game = Game(player_count, hands)
