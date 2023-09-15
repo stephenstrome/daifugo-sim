@@ -1,0 +1,4 @@
+### Daifugo Simulator
+I'm not quite sure how far I'll take this project yet. I'm also not sure if I'll split it into multiple repositories or not. Current goal is to just simulate the card game "Daifugo" using the house rules my friends play with on the command line. From there, I'd like to build analysis into it (whether through machine learning or otherwise) to find optimal plays and see if there's certain techniques that we haven't discovered yet.
+
+If I feel really adventurous, I may eventually build out a GUI and networked play as well. Although for that I'll probably make use of a game engine instead of building everything in raw python. We'll see. For now one step at a time, and that means a simple command line simulator.
