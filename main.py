@@ -1,10 +1,11 @@
 import cards
 from game import Game
 
-player_count = 4
+player_count = 2
 
 hands = cards.deal(player_count)
-print(hands)
+for i in range(0, len(hands)):
+    hands[i] = cards.sort_hand(hands[i])
 game = Game(player_count, hands)
-hands[0] = cards.sort_hand(hands[0])
-print(hands[0])
+game.start(hands)
+
