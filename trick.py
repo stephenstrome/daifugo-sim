@@ -10,6 +10,7 @@ class Trick:
     last_played = ()
     current_player = None
     run_validated = False
+    cards_to_pass = 0
 
     def end_trick(self):
         self.finished = True
@@ -26,6 +27,8 @@ class Trick:
                     self.reverse_flow = not self.reverse_flow
                 else:
                     self.reverse_flow = True
+            elif(card[0] == "7"):
+                self.cards_to_pass = self.cards_to_pass + 1
         return special_played
 
     def validate_run(self, played_cards):

@@ -29,6 +29,8 @@ class Game:
             trick = Trick(self.placements, self.current_player)
             while(not trick.finished):
                 hands[trick.current_player] = trick.play(hands[trick.current_player])
+                if(trick.cards_to_pass > 0):
+                    trick.cards_to_pass = 0
                 if(len(hands[trick.current_player]) == 0):
                     self.placements.append(trick.current_player)
                     print("Congratulations! Player " + str(self.current_player + 1) + " placed in position " + str(len(self.placements)))
