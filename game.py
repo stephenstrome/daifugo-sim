@@ -9,6 +9,7 @@ class Game:
     reverse_flow = False # cards strength is in reverse order for remainder of trick
     kakumei = False
     placements = []
+    passed_players = []
 
     def new_trick(self):
         self.last_played = ()
@@ -29,11 +30,23 @@ class Game:
             current_player = 0
         return current_player
 
+    def find_next_player(self, current_player):
+        if(len(self.placements) == self.player_count - 1): # handle when all players finished but one
+            while(current_player in self.placements):
+                current_player = self.next_player(current_player)
+        elif(len(self.placements + self.passed_players) == self.player_count - 1): # handle all players passed or finished but one
+            while(current_player in self.passed_players or current_player in self.placements):
+                current_player = self.next_player(current_player)
+        else: # handle getting the next player
+            player_found = False
+            while(not player_found):
+                current_player = self.next_player(current_player)
+                if(current_player not in self.passed_players and current_player not in self.placements):
+                    player_found = True
+        return current_player
+
     def start(self, hands):
         while(len(self.placements) < self.player_count - 1):
-            while(len(hands[self.current_player]) == 0):
-                self.current_player = self.next_player(self.current_player)
-
             print("Player " + str(self.current_player + 1) + ": please play some cards.")
 
             action = ""
@@ -55,16 +68,15 @@ class Game:
                         print("Congratulations! Player " + str(self.current_player + 1) + " placed in position " + str(len(self.placements)))
                     finished = True
                 elif(action == "skip"):
+                    self.passed_players.append(self.current_player)
                     finished = True
                 else:
                     if(action in temp_hand):
                         played_cards.append(action)
                         temp_hand.remove(action)
             
-            self.current_player = self.next_player(self.current_player)
+            self.current_player = self.find_next_player(self.current_player)
 
-        while(len(hands[self.current_player]) == 0):
-            self.current_player = self.next_player(self.current_player)
         self.placements.append(self.current_player)
         print("Uh oh! Player " + str(self.current_player + 1) + " came in last and is the daihinmin.")
             
