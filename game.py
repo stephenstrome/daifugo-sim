@@ -11,13 +11,14 @@ class Game:
     placements = []
     passed_players = []
 
-    def new_trick(self):
+    def new_trick(self, current_player):
         self.last_played = ()
         self.shibari = False
         self.geki_shibari = False
         self.reverse_flow = False
         self.passed_players = []
-        print("The trick has ended, play will continue with player " + str(self.current_player))
+        self.current_player = current_player
+        print("The trick has ended, play will continue with player " + str(self.current_player + 1))
 
     def play_cards(self, cards):
         print("test")
@@ -39,6 +40,7 @@ class Game:
         elif(len(self.placements + self.passed_players) == self.player_count - 1): # handle all players passed or finished but one
             while(current_player in self.passed_players or current_player in self.placements):
                 current_player = self.next_player(current_player)
+            self.new_trick(current_player)
         else: # handle getting the next player
             player_found = False
             while(not player_found):
