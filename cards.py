@@ -63,7 +63,7 @@ def sort_hand(hand):
 
     sorted_hand = []
     for cards in value_list.values(): # add every card to single list
-        sorted_hand.append(cards)
+        sorted_hand = sorted_hand + cards
     return sorted_hand
 
     
