@@ -21,7 +21,6 @@ class Game:
         print("The trick has ended, play will continue with player " + str(self.current_player + 1))
 
     def play_cards(self, next_play):
-        print("test")
         last_played = next_play
 
     def start(self, hands):
@@ -30,18 +29,15 @@ class Game:
             while(not trick.finished):
                 hands[trick.current_player] = trick.play(hands[trick.current_player])
                 if(trick.cards_to_pass > 0):
+                    player_receiving,new_hand,passed_cards = trick.pass_cards(hands[trick.current_player], self.player_count, self.placements)
                     trick.cards_to_pass = 0
+                    hands[player_receiving] = cards.sort_hand(hands[player_receiving] + passed_cards)
+                    hands[trick.current_player] = new_hand
                 if(len(hands[trick.current_player]) == 0):
                     self.placements.append(trick.current_player)
                     print("Congratulations! Player " + str(self.current_player + 1) + " placed in position " + str(len(self.placements)))
                 if(not trick.finished):
-                    print("finding next player")
                     self.current_player = trick.find_next_player(self.player_count)
-                    print("next player found: " + str(self.current_player))
-                # check hands to see if player is out
-                
-            
-            # self.current_player = self.find_next_player(self.current_player)
 
         self.placements.append(self.current_player)
         print("Uh oh! Player " + str(self.current_player + 1) + " came in last and is the daihinmin.")
