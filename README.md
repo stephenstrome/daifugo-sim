@@ -14,7 +14,7 @@ I have this broken down into different phases and different tasks needed to be c
 - [x] Process tricks ending
 - [x] Validate the next card played is valid
 - [ ] Process special cards (7s, 8s, Jacks)
-- [ ] Allow runs
+- [x] Allow runs
 - [ ] Handle shibari, geki shibari, and kakumei
 - [ ] Process jokers correctly
 

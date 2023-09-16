@@ -17,6 +17,7 @@ class Game:
         self.shibari = False
         self.geki_shibari = False
         self.reverse_flow = False
+        self.run_validated = False
         self.passed_players = []
         self.current_player = current_player
         print("The trick has ended, play will continue with player " + str(self.current_player + 1))
@@ -24,6 +25,17 @@ class Game:
     def play_cards(self, next_play):
         print("test")
         last_played = next_play
+
+    def validate_run(self, played_cards):
+        if(len(played_cards) >= 3):
+            current_card = played_cards[0]
+            for i in range(1, len(played_cards)):
+                if(cards.check_next_in_order(current_card, played_cards[i]) and cards.same_suit(current_card, played_cards[i])):
+                    current_card = played_cards[i]
+                else:
+                    return False
+            return True
+        return False
     
     def validate_match(self, played_cards):
         card_value = played_cards[0][0]
@@ -39,10 +51,17 @@ class Game:
         print(next_play)
         next_play = cards.sort_hand(next_play)
         # first play of trick, as long as cards match or it's a run, play is valid
-        if(len(last_play) == 0 and (self.validate_match(next_play))):
-            return True
+        if(len(last_play) == 0):
+            if(self.validate_match(next_play)):
+                self.run_validated = False
+                return True
+            elif(self.validate_run(next_play)):
+                self.run_validated = True
+                return True
+            else:
+                return False
         elif(len(next_play) == len(last_play)): # make sure same amount of cards are submitted
-            if(cards.check_first_card_greater(next_play[0], last_play[0]) and (self.validate_match(next_play))):
+            if(cards.check_first_card_greater(next_play[0], last_play[0]) and ((self.run_validated == False and self.validate_match(next_play)) or (self.run_validated == True and self.validate_run(next_play)))):
                 return True
 
         return False # play is not valid
