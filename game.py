@@ -16,6 +16,8 @@ class Game:
         self.shibari = False
         self.geki_shibari = False
         self.reverse_flow = False
+        self.passed_players = []
+        print("The trick has ended, play will continue with player " + str(self.current_player))
 
     def play_cards(self, cards):
         print("test")
@@ -48,6 +50,7 @@ class Game:
     def start(self, hands):
         while(len(self.placements) < self.player_count - 1):
             print("Player " + str(self.current_player + 1) + ": please play some cards.")
+            print("The last cards played were: " + str(self.last_played))
 
             action = ""
             temp_hand = copy.deepcopy(hands[self.current_player])
