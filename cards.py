@@ -4,6 +4,12 @@ suits = ["d", "h", "c", "s"]
 normal_cards = ["3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K", "A", "2"]
 special = {"jkr": 2}
 
+def same_suit(first_card, second_card):
+    return first_card[1] == second_card[1]
+
+def check_next_in_order(original_card, next_card):
+    return (normal_cards.index(next_card[0]) - normal_cards.index(original_card[0]) == 1)
+
 # Check if first card has a greater index in normal cards
 def check_first_card_greater(first_card, second_card):
     if(normal_cards.index(first_card[0]) > normal_cards.index(second_card[0])):
