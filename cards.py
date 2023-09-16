@@ -4,6 +4,12 @@ suits = ["d", "h", "c", "s"]
 normal_cards = ["3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K", "A", "2"]
 special = {"jkr": 2}
 
+# Check if first card has a greater index in normal cards
+def check_first_card_greater(first_card, second_card):
+    if(normal_cards.index(first_card[0]) > normal_cards.index(second_card[0])):
+        return True
+    return False
+
 def shuffle():
     deck = []
     for i in suits:
