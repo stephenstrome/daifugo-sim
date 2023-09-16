@@ -10,6 +10,7 @@ class Trick:
     last_played = ()
     current_player = None
     run_validated = False
+    cards_to_pass = 0
 
     def end_trick(self):
         self.finished = True
@@ -26,6 +27,8 @@ class Trick:
                     self.reverse_flow = not self.reverse_flow
                 else:
                     self.reverse_flow = True
+            elif(card[0] == "7"):
+                self.cards_to_pass = self.cards_to_pass + 1
         return special_played
 
     def validate_run(self, played_cards):
@@ -85,9 +88,37 @@ class Trick:
         while(self.current_player in self.passed_players):
             self.current_player = self.next_player(self.current_player, player_count)
         if(len(self.passed_players) == player_count - 1): # handle all players passed or finished but one
-            print("ending trick")
             self.end_trick()
         return self.current_player
+    
+    def pass_cards(self, hand, player_count, finished_players):
+        player_receiving = self.current_player
+        while(self.current_player == player_receiving or player_receiving in finished_players):
+            player_receiving = self.next_player(player_receiving, player_count)
+        print("Player " + str(self.current_player + 1) + ": pass up to " + str(self.cards_to_pass) + " cards to player " + str(player_receiving + 1) + ". Type play when ready to pass.")
+        finished = False
+        played_cards,temp_hand = self.reset_cards_selected(hand)
+        while(not finished):
+            print("Pending cards: " + str(played_cards))
+            action = input(temp_hand)
+            if(action == "reset"):
+                played_cards,temp_hand = self.reset_cards_selected(hand)
+            elif(action == "play"):
+                if(len(played_cards) <= self.cards_to_pass):
+                    if(len(temp_hand) == 0):
+                        self.passed_players.append(self.current_player)
+                    finished = True
+                else:
+                    print("The cards played are invalid, please pick new cards.")
+                    played_cards,temp_hand = self.reset_cards_selected(hand)
+            elif(action == "skip"):
+                played_cards,temp_hand = self.reset_cards_selected(hand)
+                finished = True
+            else:
+                if(action in temp_hand):
+                    played_cards.append(action)
+                    temp_hand.remove(action)
+        return player_receiving,temp_hand,played_cards
     
     def play(self, hand):
         print("Player " + str(self.current_player + 1) + ": please play some cards.")
