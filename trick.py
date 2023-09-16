@@ -13,6 +13,14 @@ class Trick:
     def end_trick(self):
         self.finished = True
 
+    def check_special(self, played_cards):
+        special_played = False
+        for card in played_cards:
+            if(card[0] == "8"):
+                special_played = True
+                self.end_trick()
+        return special_played
+
     def validate_run(self, played_cards):
         if(len(played_cards) >= 3):
             current_card = played_cards[0]
@@ -41,17 +49,14 @@ class Trick:
         if(len(last_play) == 0):
             if(self.validate_match(next_play)):
                 self.run_validated = False
-                return True
+                valid = True
             elif(self.validate_run(next_play)):
                 self.run_validated = True
-                return True
-            else:
-                return False
+                valid = True
         elif(len(next_play) == len(last_play)): # make sure same amount of cards are submitted
             if(cards.check_first_card_greater(next_play[0], last_play[0]) and ((self.run_validated == False and self.validate_match(next_play)) or (self.run_validated == True and self.validate_run(next_play)))):
-                return True
-
-        return False # play is not valid
+                valid = True
+        return valid # play is not valid
     
     def reset_cards_selected(self,hand):
         return [],copy.deepcopy(hand)
@@ -83,6 +88,7 @@ class Trick:
                 played_cards,temp_hand = self.reset_cards_selected(hand)
             elif(action == "play"):
                 if(self.validate_play(played_cards, self.last_played)):
+                    special_played = self.check_special(played_cards)
                     self.last_played = played_cards
                     if(len(temp_hand) == 0):
                         self.passed_players.append(self.current_player)
