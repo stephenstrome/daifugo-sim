@@ -9,6 +9,7 @@ class Trick:
     passed_players = []
     last_played = ()
     current_player = None
+    run_validated = False
 
     def end_trick(self):
         self.finished = True
@@ -19,6 +20,12 @@ class Trick:
             if(card[0] == "8"):
                 special_played = True
                 self.end_trick()
+            elif(card[0] == "J"):
+                special_played = True
+                if(self.run_validated):
+                    self.reverse_flow = not self.reverse_flow
+                else:
+                    self.reverse_flow = True
         return special_played
 
     def validate_run(self, played_cards):
@@ -45,6 +52,7 @@ class Trick:
     def validate_play(self, next_play, last_play):
         print(next_play)
         next_play = cards.sort_hand(next_play)
+        valid = False
         # first play of trick, as long as cards match or it's a run, play is valid
         if(len(last_play) == 0):
             if(self.validate_match(next_play)):
@@ -54,7 +62,12 @@ class Trick:
                 self.run_validated = True
                 valid = True
         elif(len(next_play) == len(last_play)): # make sure same amount of cards are submitted
-            if(cards.check_first_card_greater(next_play[0], last_play[0]) and ((self.run_validated == False and self.validate_match(next_play)) or (self.run_validated == True and self.validate_run(next_play)))):
+            potential_better_card = next_play[0]
+            potential_worse_card = last_play[0]
+            if(self.reverse_flow): # if flow reverse, then the last play should be greater than the previous play
+                potential_better_card = last_play[0]
+                potential_worse_card = next_play[0]
+            if(cards.check_first_card_greater(potential_better_card, potential_worse_card) and ((self.run_validated == False and self.validate_match(next_play)) or (self.run_validated == True and self.validate_run(next_play)))):
                 valid = True
         return valid # play is not valid
     
@@ -98,6 +111,7 @@ class Trick:
                     played_cards,temp_hand = self.reset_cards_selected(hand)
             elif(action == "skip"):
                 self.passed_players.append(self.current_player)
+                played_cards,temp_hand = self.reset_cards_selected(hand)
                 finished = True
             else:
                 if(action in temp_hand):
