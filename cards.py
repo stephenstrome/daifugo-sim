@@ -34,11 +34,11 @@ def sort_hand(hand):
     value_list = {}
 
     # sort value in ascending order
-    for i in normal_cards:
+    for i in normal_cards: # build dictionary of each numerical card type
         value_list[i] = []
-    for i in special.keys():
+    for i in special.keys(): # sort special cards at very end of the list
         value_list[i] = []
-    for i in hand:
+    for i in hand: # add each numerical card to the appropriate list
         if(i in special.keys()):
             value_list[i].append(i)
         else:
@@ -47,18 +47,23 @@ def sort_hand(hand):
 
     # sort suits
     for i,k in value_list.items():
-        if(i not in special.keys()):
-            if(len(k) > 1):
+        if(i not in special.keys()): # make sure it's not a non-numerical card
+            if(len(k) > 1): # If there's only one card, no need to sort by suit
                 suit_indexes = []
                 suit_sorted = []
-                for card in k:
+                for card in k: # Get the order of each suit
                     suit_indexes.append(suits.index(card[1]))
-                for index in range(0,len(suits)):
+                for index in range(0,len(suits)): # loop through each suit in order, if suit present add that suit to beginning of new list
                     try:
                         add_suit = suit_indexes.index(index)
                         suit_sorted.append(k[add_suit])
                     except:
                         add_suit = -1
                 value_list[i] = suit_sorted
+
+    sorted_hand = []
+    for cards in value_list.values(): # add every card to single list
+        sorted_hand.append(cards)
+    return sorted_hand
 
     
