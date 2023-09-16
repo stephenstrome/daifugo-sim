@@ -1,4 +1,5 @@
 import copy
+import cards
 
 class Game:
     player_count = 0
@@ -20,12 +21,34 @@ class Game:
         self.current_player = current_player
         print("The trick has ended, play will continue with player " + str(self.current_player + 1))
 
-    def play_cards(self, cards):
+    def play_cards(self, next_play):
         print("test")
-        last_played = cards
+        last_played = next_play
+    
+    def validate_match(self, played_cards):
+        card_value = played_cards[0][0]
+        print(card_value)
+        for i in range(0, len(played_cards)):
+            print(played_cards[i][0])
+            if(played_cards[i][0] != card_value):
+                return False
 
-    def validate_play(self, cards):
-        print("test")
+        return True
+
+    def validate_play(self, next_play, last_play):
+        print(next_play)
+        next_play = cards.sort_hand(next_play)
+        # first play of trick, as long as cards match or it's a run, play is valid
+        if(len(last_play) == 0 and (self.validate_match(next_play))):
+            return True
+        elif(len(next_play) == len(last_play)): # make sure same amount of cards are submitted
+            if(cards.check_first_card_greater(next_play[0], last_play[0]) and (self.validate_match(next_play))):
+                return True
+
+        return False # play is not valid
+
+    def reset_cards_selected(self,hands):
+        return [],copy.deepcopy(hands[self.current_player])
 
     def next_player(self, current_player):
         current_player = current_player + 1
@@ -55,23 +78,26 @@ class Game:
             print("The last cards played were: " + str(self.last_played))
 
             action = ""
-            temp_hand = copy.deepcopy(hands[self.current_player])
-            played_cards = []
+            played_cards,temp_hand = self.reset_cards_selected(hands)
+
             finished = False
 
             while(not finished):
                 print("Pending cards: " + str(played_cards))
                 action = input(temp_hand)
                 if(action == "reset"):
-                    played_cards = []
-                    temp_hand = copy.deepcopy(hands[self.current_player])
+                    played_cards,temp_hand = self.reset_cards_selected(hands)
                 elif(action == "play"):
-                    self.last_played = played_cards
-                    hands[self.current_player] = temp_hand
-                    if(len(hands[self.current_player]) == 0):
-                        self.placements.append(self.current_player)
-                        print("Congratulations! Player " + str(self.current_player + 1) + " placed in position " + str(len(self.placements)))
-                    finished = True
+                    if(self.validate_play(played_cards, self.last_played)):
+                        self.last_played = played_cards
+                        hands[self.current_player] = temp_hand
+                        if(len(hands[self.current_player]) == 0):
+                            self.placements.append(self.current_player)
+                            print("Congratulations! Player " + str(self.current_player + 1) + " placed in position " + str(len(self.placements)))
+                        finished = True
+                    else:
+                        print("The cards played are invalid, please pick new cards.")
+                        played_cards,temp_hand = self.reset_cards_selected(hands)
                 elif(action == "skip"):
                     self.passed_players.append(self.current_player)
                     finished = True
