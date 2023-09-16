@@ -11,7 +11,7 @@ I have this broken down into different phases and different tasks needed to be c
 - [x] Deal and shuffle deck for different amounts of players
 - [x] Handle console input from player for handling their turn
 - [x] Correctly handle turn progression past finished and passed players
-- [ ] Process tricks ending
+- [x] Process tricks ending
 - [ ] Validate the next card played is valid
 - [ ] Process special cards (7s, 8s, Jacks)
 - [ ] Allow runs
