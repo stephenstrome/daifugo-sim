@@ -13,7 +13,7 @@ I have this broken down into different phases and different tasks needed to be c
 - [x] Correctly handle turn progression past finished and passed players
 - [x] Process tricks ending
 - [x] Validate the next card played is valid
-- [ ] Process special cards (7s, 8s, Jacks)
+- [x] Process special cards (7s, 8s, Jacks)
 - [x] Allow runs
 - [ ] Handle shibari, geki shibari, and kakumei
 - [ ] Process jokers correctly
