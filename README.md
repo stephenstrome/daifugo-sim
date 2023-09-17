@@ -15,7 +15,7 @@ I have this broken down into different phases and different tasks needed to be c
 - [x] Validate the next card played is valid
 - [x] Process special cards (7s, 8s, Jacks)
 - [x] Allow runs
-- [ ] Handle shibari, geki shibari, and kakumei
+- [x] Handle shibari, geki shibari, and kakumei
 - [ ] Process jokers correctly
 
 - Phase 2: Automatically play games, train models
