@@ -12,6 +12,28 @@ class Trick:
     run_validated = False
     special_played = False
     cards_to_pass = 0
+    second_turn = False
+
+    def check_valid_shibari(self, played_cards):
+        shibari = True
+        for i in range(0, len(self.last_played)):
+            if(self.last_played[i][1] != played_cards[i][1]):
+                shibari = False
+        return shibari
+    
+    def check_valid_geki_shibari(self, played_cards):
+        geki_shibari = True
+        for i in range(0, len(self.last_played)):
+            if(self.last_played[i][1] != played_cards[i][1]):
+                geki_shibari = False
+            if((not cards.check_next_in_order(self.last_played[i], played_cards[i]) and not self.reverse_flow) or (not cards.check_next_in_order(played_cards[i], self.last_played[i]) and self.reverse_flow)):
+                geki_shibari = False
+        return geki_shibari
+
+    def update_shibari_status(self, played_cards):
+        self.shibari = self.check_valid_shibari(played_cards)
+        self.geki_shibari = self.check_valid_geki_shibari(played_cards)
+        self.second_turn = False
 
     def end_trick(self):
         self.finished = True
@@ -47,16 +69,13 @@ class Trick:
     
     def validate_match(self, played_cards):
         card_value = played_cards[0][0]
-        print(card_value)
         for i in range(0, len(played_cards)):
-            print(played_cards[i][0])
             if(played_cards[i][0] != card_value):
                 return False
 
         return True
 
     def validate_play(self, next_play, last_play):
-        print(next_play)
         next_play = cards.sort_hand(next_play)
         valid = False
         # first play of trick, as long as cards match or it's a run, play is valid
@@ -74,7 +93,17 @@ class Trick:
                 potential_better_card = last_play[0]
                 potential_worse_card = next_play[0]
             if(cards.check_first_card_greater(potential_better_card, potential_worse_card) and ((self.run_validated == False and self.validate_match(next_play)) or (self.run_validated == True and self.validate_run(next_play)))):
-                valid = True
+                # check shibari
+                if(self.geki_shibari):
+                    # check same suit and next in order
+                    if(self.check_valid_geki_shibari(next_play)):
+                        valid = True
+                elif(self.shibari):
+                    # check same suit
+                    if(self.check_valid_shibari(next_play)):
+                        valid = True
+                else:
+                    valid = True
         return valid # play is not valid
     
     def reset_cards_selected(self,hand):
@@ -137,6 +166,10 @@ class Trick:
             elif(action == "play"):
                 if(self.validate_play(played_cards, self.last_played)):
                     self.special_played = self.check_special(played_cards)
+                    if(self.second_turn):
+                        self.update_shibari_status(played_cards)
+                    if(len(self.last_played) == 0):
+                        self.second_turn = True
                     self.last_played = played_cards
                     if(len(temp_hand) == 0):
                         self.passed_players.append(self.current_player)
@@ -155,6 +188,5 @@ class Trick:
         return temp_hand
     
     def __init__(self, finished_players, current_player):
-        print("finished: " + str(finished_players))
         self.passed_players = copy.deepcopy(finished_players)
         self.current_player = current_player
