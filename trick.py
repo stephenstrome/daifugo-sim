@@ -10,6 +10,7 @@ class Trick:
     last_played = ()
     current_player = None
     run_validated = False
+    special_played = False
     cards_to_pass = 0
 
     def end_trick(self):
@@ -29,6 +30,8 @@ class Trick:
                     self.reverse_flow = True
             elif(card[0] == "7"):
                 self.cards_to_pass = self.cards_to_pass + 1
+            elif((card[0] == "2" and not self.reverse_flow) or (card[0] == "3" and self.reverse_flow)):
+                special_played = True
         return special_played
 
     def validate_run(self, played_cards):
@@ -121,6 +124,7 @@ class Trick:
         return player_receiving,temp_hand,played_cards
     
     def play(self, hand):
+        self.special_played = False
         print("Player " + str(self.current_player + 1) + ": please play some cards.")
         print("The last cards played were: " + str(self.last_played))
         finished = False
@@ -132,7 +136,7 @@ class Trick:
                 played_cards,temp_hand = self.reset_cards_selected(hand)
             elif(action == "play"):
                 if(self.validate_play(played_cards, self.last_played)):
-                    special_played = self.check_special(played_cards)
+                    self.special_played = self.check_special(played_cards)
                     self.last_played = played_cards
                     if(len(temp_hand) == 0):
                         self.passed_players.append(self.current_player)
