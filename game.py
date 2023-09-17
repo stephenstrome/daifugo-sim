@@ -8,6 +8,7 @@ class Game:
     last_played = ()
     kakumei = False
     placements = []
+    disqualified = []
     
 
     def new_trick(self, current_player):
@@ -24,8 +25,8 @@ class Game:
         last_played = next_play
 
     def start(self, hands):
-        while(len(self.placements) < self.player_count - 1):
-            trick = Trick(self.placements, self.current_player)
+        while(len(self.placements + self.disqualified) < self.player_count - 1):
+            trick = Trick((self.placements + self.disqualified), self.current_player)
             while(not trick.finished):
                 hands[trick.current_player] = trick.play(hands[trick.current_player])
                 if(trick.cards_to_pass > 0):
@@ -34,13 +35,22 @@ class Game:
                     hands[player_receiving] = cards.sort_hand(hands[player_receiving] + passed_cards)
                     hands[trick.current_player] = new_hand
                 if(len(hands[trick.current_player]) == 0):
-                    self.placements.append(trick.current_player)
-                    print("Congratulations! Player " + str(self.current_player + 1) + " placed in position " + str(len(self.placements)))
+                    if(trick.special_played):
+                        self.disqualified.append(trick.current_player)
+                        print("Player " + str(self.current_player + 1) + " has been disqualified for going out on a special card.")
+                    else:
+                        self.placements.append(trick.current_player)
+                        print("Congratulations! Player " + str(self.current_player + 1) + " placed in position " + str(len(self.placements)))
                 if(not trick.finished):
                     self.current_player = trick.find_next_player(self.player_count)
 
         self.placements.append(self.current_player)
-        print("Uh oh! Player " + str(self.current_player + 1) + " came in last and is the daihinmin.")
+        if(len(self.disqualified) > 0):
+            print("The following players placed last due to playing a special card to go out:")
+            for i in self.disqualified:
+                print(str(i + 1))
+        else:
+            print("Uh oh! Player " + str(self.current_player + 1) + " came in last and is the daihinmin.")
             
 
     def __init__(self, player_count, hands):
