@@ -13,6 +13,15 @@ class Trick:
     special_played = False
     cards_to_pass = 0
     second_turn = False
+    kakumei_trigger = False
+
+    def check_kakumei(self, played_cards):
+        if(self.run_validated and len(played_cards) >= 5):
+            return True
+        elif(not self.run_validated and len(played_cards) == 4):
+            return True
+        else:
+            return False
 
     def check_valid_shibari(self, played_cards):
         shibari = True
@@ -39,6 +48,7 @@ class Trick:
         self.finished = True
 
     def check_special(self, played_cards):
+        jack_repeat = False
         special_played = False
         for card in played_cards:
             if(card[0] == "8"):
@@ -46,10 +56,9 @@ class Trick:
                 self.end_trick()
             elif(card[0] == "J"):
                 special_played = True
-                if(self.run_validated):
+                if not jack_repeat:
                     self.reverse_flow = not self.reverse_flow
-                else:
-                    self.reverse_flow = True
+                    jack_repeat = True
             elif(card[0] == "7"):
                 self.cards_to_pass = self.cards_to_pass + 1
             elif((card[0] == "2" and not self.reverse_flow) or (card[0] == "3" and self.reverse_flow)):
@@ -166,6 +175,9 @@ class Trick:
             elif(action == "play"):
                 if(self.validate_play(played_cards, self.last_played)):
                     self.special_played = self.check_special(played_cards)
+                    if(self.check_kakumei(played_cards)):
+                        self.reverse_flow = not self.reverse_flow
+                        self.kakumei_trigger = True
                     if(self.second_turn):
                         self.update_shibari_status(played_cards)
                     if(len(self.last_played) == 0):
@@ -187,6 +199,8 @@ class Trick:
                     temp_hand.remove(action)
         return temp_hand
     
-    def __init__(self, finished_players, current_player):
+    def __init__(self, finished_players, current_player, kakumei):
         self.passed_players = copy.deepcopy(finished_players)
         self.current_player = current_player
+        if(kakumei):
+            self.reverse_flow = True

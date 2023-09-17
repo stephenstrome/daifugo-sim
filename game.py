@@ -26,7 +26,7 @@ class Game:
 
     def start(self, hands):
         while(len(self.placements + self.disqualified) < self.player_count - 1):
-            trick = Trick((self.placements + self.disqualified), self.current_player)
+            trick = Trick((self.placements + self.disqualified), self.current_player, self.kakumei)
             while(not trick.finished):
                 hands[trick.current_player] = trick.play(hands[trick.current_player])
                 if(trick.cards_to_pass > 0):
@@ -41,6 +41,9 @@ class Game:
                     else:
                         self.placements.append(trick.current_player)
                         print("Congratulations! Player " + str(self.current_player + 1) + " placed in position " + str(len(self.placements)))
+                if(trick.kakumei_trigger):
+                    self.kakumei = not self.kakumei
+                    trick.kakumei_trigger = False
                 if(not trick.finished):
                     self.current_player = trick.find_next_player(self.player_count)
 
