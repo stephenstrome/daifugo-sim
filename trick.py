@@ -14,17 +14,25 @@ class Trick:
     cards_to_pass = 0
     second_turn = False
 
-    def update_shibari_status(self, played_cards):
+    def check_valid_shibari(self, played_cards):
         shibari = True
-        geki_shibari = True
         for i in range(0, len(self.last_played)):
             if(self.last_played[i][1] != played_cards[i][1]):
                 shibari = False
+        return shibari
+    
+    def check_valid_geki_shibari(self, played_cards):
+        geki_shibari = True
+        for i in range(0, len(self.last_played)):
+            if(self.last_played[i][1] != played_cards[i][1]):
                 geki_shibari = False
             if((not cards.check_next_in_order(self.last_played[i], played_cards[i]) and not self.reverse_flow) or (not cards.check_next_in_order(played_cards[i], self.last_played[i]) and self.reverse_flow)):
                 geki_shibari = False
-        self.shibari = shibari
-        self.geki_shibari = geki_shibari
+        return geki_shibari
+
+    def update_shibari_status(self, played_cards):
+        self.shibari = self.check_valid_shibari(played_cards)
+        self.geki_shibari = self.check_valid_geki_shibari(played_cards)
         self.second_turn = False
 
     def end_trick(self):
@@ -85,7 +93,17 @@ class Trick:
                 potential_better_card = last_play[0]
                 potential_worse_card = next_play[0]
             if(cards.check_first_card_greater(potential_better_card, potential_worse_card) and ((self.run_validated == False and self.validate_match(next_play)) or (self.run_validated == True and self.validate_run(next_play)))):
-                valid = True
+                # check shibari
+                if(self.geki_shibari):
+                    # check same suit and next in order
+                    if(self.check_valid_geki_shibari(next_play)):
+                        valid = True
+                elif(self.shibari):
+                    # check same suit
+                    if(self.check_valid_shibari(next_play)):
+                        valid = True
+                else:
+                    valid = True
         return valid # play is not valid
     
     def reset_cards_selected(self,hand):
